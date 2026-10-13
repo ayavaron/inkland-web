@@ -1,0 +1,74 @@
+/* EXIT HUNTERS: the web page's loading screen (Aya, 2026-10-13), skinned like the main menu
+   (ui/main_menu.gd): the flat night blue (MainMenu.BG), the title in League Spartan at its
+   heaviest, then where the first item would be, LOADING and a bar: a white border as thick
+   as the page box's (MainMenu.BORDER, 3 px) and the selected item's orange fill.
+   publish_web.sh copies this file and the font next to index.html. */
+@font-face {
+	font-family: "League Spartan";
+	src: url("LeagueSpartan-Variable.ttf") format("truetype");
+	font-weight: 100 900;
+}
+body, #status {
+	background-color: #12335c;
+}
+#status-splash {
+	display: none !important;
+}
+#status {
+	justify-content: flex-start;
+	align-items: flex-start;
+	box-sizing: border-box;
+	padding: 12vh 14vw;
+	font-family: "League Spartan", sans-serif;
+}
+#status::before {
+	order: 0;
+	content: "EXIT HUNTERS";
+	color: #ffffff;
+	font-weight: 900;
+	font-size: min(76px, 11vw);
+	line-height: 1;
+	white-space: nowrap;
+}
+#status::after {
+	order: 1;
+	content: "LOADING";
+	color: #ff8c42;
+	font-weight: 600;
+	font-size: min(24px, 5vw);
+	margin-top: 6px;
+}
+#status-progress {
+	order: 2;
+	position: static;
+	-webkit-appearance: none;
+	appearance: none;
+	box-sizing: border-box;
+	width: min(420px, 72vw);
+	height: 18px;
+	margin: 10px 0 0 0;
+	border: 3px solid #ffffff;
+	border-radius: 0;
+	background: transparent;
+	color: #ff8c42;
+}
+#status-progress::-webkit-progress-bar {
+	background: transparent;
+}
+#status-progress::-webkit-progress-value {
+	background: #ff8c42;
+}
+#status-progress::-moz-progress-bar {
+	background: #ff8c42;
+}
+#status-notice {
+	order: 3;
+	font-family: "League Spartan", sans-serif;
+	font-size: 18px;
+	background-color: #12335c;
+	border: 3px solid #ff3b3b;
+	border-radius: 0;
+	color: #ffffff;
+	margin: 24px 0 0 0;
+	text-align: left;
+}
