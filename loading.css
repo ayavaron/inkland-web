@@ -72,3 +72,19 @@ body, #status {
 	margin: 24px 0 0 0;
 	text-align: left;
 }
+/* GPU-11: no WebGL 2 (web/boot.js): CANNOT START in place of LOADING, the game's notice under it. */
+html.no-webgl2 #status::after {
+	content: "CANNOT START";
+	color: #ff3b3b;
+}
+html.no-webgl2 #status-notice {
+	max-width: min(560px, 72vw);
+	padding: 12px 16px;
+	line-height: 1.35;
+}
+html.no-webgl2 #status-notice p {
+	margin: 0 0 8px 0;
+}
+html.no-webgl2 #status-notice p:last-child {
+	margin-bottom: 0;
+}
