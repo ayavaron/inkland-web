@@ -127,6 +127,109 @@
 		document.addEventListener("DOMContentLoaded", showNotice);
 	}
 
+	// --- 4. The splash (UI-30, Aya's version E, 2026-11-24) -------------------------------------
+	// Six numbered basics beside one baked picture of the game (splash_screen.png, seed 275127 map 1,
+	// bake: ui/debug/dispatch.gd --pin-souvenir). It shows from the page's first paint until the
+	// player clicks CLICK TO START (ui/main_menu.gd show_gate calls inklandSplashDone). It lies over
+	// the loading page and the canvas and takes no clicks, so the game's own gate gets them. The
+	// title, LOADING and the bar are the loading page's (loading.css); CLICK TO START is the
+	// game's: the splash sits under them on the same grid (1600 x 900 reference, 12 columns of 74
+	// with 24 gutters; the board scales down as a whole, and on a narrow window the lines go above
+	// the picture). All the words are here, so they change without a new bake.
+	var SPLASH = [
+		["Time only moves when you act.", 56],
+		["Attacks only reach next to you. Pins upgrade them.", 80],
+		["Click yourself to wait.", 56],
+		["Click an item to use it. Drag it onto the map to get rid of it, unused.", 104],
+		["Tooltips dock at the bottom.", 56],
+		["Z undo, Shift+R restart. Also on the hotbar.", 80],
+	];
+	// Where each dot points, in the picture's own 1600 x 900: the wind and tick device, a guard,
+	// your orb, hotbar slot 2, the tooltip's seam, Undo and Restart.
+	var DOTS = [[928, 796], [664, 372], [1252, 252], [1068, 796], [440, 748], [1538, 796]];
+	var splash = null;
+	// The page's margins, as the game's menu lays its first frame out (ui/main_menu.gd _margin_x,
+	// _margin_y: about 14% of the width and 12% of the height, in whole grid units of 24), so the
+	// title and LOADING sit where the game's title and CLICK TO START will: no jump at the handover.
+	var U = 24;
+	var margins = function () {
+		var w = window.innerWidth, h = window.innerHeight;
+		return [Math.max(1, Math.round(w * 0.14 / U)) * U, Math.max(1, Math.round(h * 0.12 / U)) * U];
+	};
+	var fitMargins = function () {
+		var m = margins();
+		document.documentElement.style.setProperty("--mx", m[0] + "px");
+		document.documentElement.style.setProperty("--my", m[1] + "px");
+	};
+	fitMargins();
+	window.addEventListener("resize", fitMargins);
+	var fitSplash = function () {
+		if (!splash) {
+			return;
+		}
+		var w = window.innerWidth, h = window.innerHeight;
+		var m = margins();
+		var narrow = w < 900;
+		var s = Math.min(1, w / 1600, h / 900);
+		splash.className = narrow ? "narrow" : "";
+		splash.style.setProperty("--s", String(s));
+		splash.style.setProperty("--x0", m[0] + "px");
+		splash.style.setProperty("--y0", (m[1] + (narrow ? 156 : 180 * s)) + "px");
+	};
+	window.inklandSplashDone = function () {
+		if (splash) {
+			splash.remove();
+			splash = null;
+			window.removeEventListener("resize", fitSplash);
+		}
+	};
+	var makeSplash = function () {
+		if (noWebGL || /[?&]nosplash\b/.test(q) || document.getElementById("splash")) {
+			return;
+		}
+		splash = document.createElement("div");
+		splash.id = "splash";
+		var list = document.createElement("ol");
+		list.className = "sp-list";
+		SPLASH.forEach(function (row, i) {
+			var li = document.createElement("li");
+			li.style.height = row[1] + "px";
+			var dot = document.createElement("span");
+			dot.className = "sp-dot";
+			dot.textContent = String(i + 1);
+			var text = document.createElement("span");
+			text.className = "sp-text";
+			text.textContent = row[0];
+			li.appendChild(dot);
+			li.appendChild(text);
+			list.appendChild(li);
+		});
+		var pic = document.createElement("div");
+		pic.className = "sp-pic";
+		var img = document.createElement("img");
+		img.src = "splash_screen.png";
+		img.alt = "";
+		pic.appendChild(img);
+		DOTS.forEach(function (d, i) {
+			var dot = document.createElement("span");
+			dot.className = "sp-dot sp-on";
+			dot.textContent = String(i + 1);
+			dot.style.left = (d[0] / 16) + "%";
+			dot.style.top = (d[1] / 9) + "%";
+			pic.appendChild(dot);
+		});
+		splash.appendChild(list);
+		splash.appendChild(pic);
+		document.body.appendChild(splash);
+		fitSplash();
+		window.addEventListener("resize", fitSplash);
+	};
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", makeSplash);
+	} else {
+		makeSplash();
+	}
+
 	// --- 3. The warm-up -------------------------------------------------------------------------
 	var WARM_MAX_MS = 30000;
 	var warmDone = false;
